@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>越南语期末测试系统 - 专业版</title>
+    <style>
+        /* 基础样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        /* 容器样式 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* 标题样式 */
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #4a5568;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #e2e8f0;
+        }
+        
+        h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 1rem;
+        }
+        
+        /* 倒计时样式 */
+        .timer-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 15px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        
+        .timer-display {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4a5568;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .timer-warning {
+            color: #f59e0b;
+        }
+        
+        .timer-danger {
+            color: #ef4444;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.5; }
+        }
+        
+        /* 表单元素 */
+        input[type="text"], select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: #f7fafc;
+        }
+        
+        input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+        
+        input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 0.75rem;
+            cursor: pointer;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        
+        /* 按钮样式 */
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.3s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 100%;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-primary:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            width: 100%;
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+        }
+        
+        /* 问题卡片 */
+        .question-card {
+            background: #f8fafc;
+            border: 2px solid transparent;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .question-card:hover {
+            border-color: #e2e8f0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+        
+        .question-card.answered {
+            background: linear-gradient(to right, #f0fdf4, #f8fafc);
+            border-color: #86efac;
+        }
+        
+        .question-number {
+            display: inline-block;
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 35px;
+            font-weight: bold;
+            margin-right: 1rem;
+        }
+        
+        .question-option {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            margin: 0.5rem 0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .question-option:hover {
+            background-color: #e2e8f0;
+            transform: translateX(5px);
+        }
+        
+        .question-option.selected {
+            background: linear-gradient(to right, #ddd6fe, #e9d5ff);
+            border-color: #8b5cf6;
+            font-weight: 600;
+        }
+        
+        /* 分数显示 */
+        .score-display {
+            text-align: center;
+            margin: 3rem 0;
+        }
+        
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+            position: relative;
+        }
+        
+        .score-number {
+            font-size: 4rem;
+            font-weight: 800;
+            color: white;
+        }
+        
+        .score-label {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.2rem;
+            color: #4a5568;
+        }
+        
+        /* 排行榜 */
+        .ranking-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: linear-gradient(to right, #f8fafc, #f1f5f9);
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+        
+        .ranking-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .ranking-item:nth-child(1) {
+            border-left-color: #fbbf24;
+            background: linear-gradient(to right, #fef3c7, #fde68a);
+        }
+        
+        .ranking-item:nth-child(2) {
+            border-left-color: #cbd5e0;
+            background: linear-gradient(to right, #e2e8f0, #cbd5e0);
+        }
+        
+        .ranking-item:nth-child(3) {
+            border-left-color: #f59e0b;
+            background: linear-gradient(to right, #fed7aa, #fdba74);
+        }
+        
+        .ranking-rank {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #4a5568;
+        }
+        
+        .ranking-name {
+            flex: 1;
+            margin-left: 1rem;
+            font-weight: 600;
+        }
+        
+        .ranking-score {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #7c3aed;
+        }
+        
+        /* 表格美化 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        
+        th {
+            text-align: left;
+            padding: 1rem;
+            background: #f8fafc;
+            font-weight: 700;
+            color: #4a5568;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        tr:hover {
+            background-color: #f8fafc;
+        }
+        
+        .highlight-row {
+            background: linear-gradient(to right, #fef3c7, #fde68a);
+            font-weight: 600;
+        }
+        
+        /* 词汇框 */
+        .vocab-box {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            border: 2px solid #cbd5e0;
+        }
+        
+        .vocab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+        
+        .vocab-item {
+            background: white;
+            padding: 0.75rem;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+        
+        .vocab-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            border-color: #8b5cf6;
+        }
+        
+        /* 结果指示器 */
+        .result-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        
+        .correct {
+            color: #059669;
+            background: #d1fae5;
+        }
+        
+        .incorrect {
+            color: #dc2626;
+            background: #fee2e2;
+        }
+        
+        /* 响应式网格 */
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 0.75rem;
+        }
+        
+        /* 移动端优化 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0.5rem;
+            }
+            
+            .card {
+                padding: 1.5rem;
+                border-radius: 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .timer-container {
+                top: 10px;
+                right: 10px;
+                padding: 0.75rem 1rem;
+            }
+            
+            .timer-display {
+                font-size: 1.25rem;
+            }
+            
+            .vocab-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+            
+            .result-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+            
+            .score-circle {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .score-number {
+                font-size: 3rem;
+            }
+        }
+        
+        /* 动画效果 */
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* 进度条 */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+        
+        /* 完成状态图标 */
+        .status-icon {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-size: 14px;
+            margin-left: 0.5rem;
+        }
+        
+        .status-complete {
+            background: #10b981;
+            color: white;
+        }
+        
+        .status-incomplete {
+            background: #e2e8f0;
+            color: #9ca3af;
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+    
+    <script>
+        // 考试时间限制（45分钟）
+        const EXAM_DURATION = 45 * 60; // 45分钟转换为秒
+        
+        // 试题数据
+        const examData = {
+            vocabularyQuestions: [
+                {
+                    id: 'v1',
+                    question: 'Chính phủ ban hành nhiều biện pháp nhằm _____ tình trạng buôn lậu qua biên giới.',
+                    options: ['A. ngăn chặn', 'B. khuyến khích', 'C. duy trì', 'D. mở rộng']
+                },
+                {
+                    id: 'v2',
+                    question: 'Bà cụ bị tai biến nặng, phải nằm _____ suốt nửa năm trời.',
+                    options: ['A. liệt giường', 'B. nghỉ dưỡng', 'C. điều dưỡng', 'D. an dưỡng']
+                },
+                {
+                    id: 'v3',
+                    question: 'Hoàn thành xong báo cáo, tôi còn phải _____ luôn bản thuyết trình cho buổi họp ngày mai.',
+                    options: ['A. soạn thảo', 'B. sao chép', 'C. in ấn', 'D. đóng dấu']
+                },
+                {
+                    id: 'v4',
+                    question: 'Nghệ sĩ piano trẻ này có phong cách biểu diễn thật _____, khiến khán giả như bị mê hoặc.',
+                    options: ['A. đơn điệu', 'B. quyến rũ', 'C. bình thường', 'D. cứng nhắc']
+                },
+                {
+                    id: 'v5',
+                    question: 'Ông lão ngồi bên lò sưởi, _____ cho cháu nghe những câu chuyện cổ tích.',
+                    options: ['A. thì thầm', 'B. la mắng', 'C. kể lể', 'D. im lặng']
+                },
+                {
+                    id: 'v6',
+                    question: 'Cơn bão kinh hoàng đã _____ hàng trăm ngôi nhà ven biển.',
+                    options: ['A. tàn phá', 'B. sửa chữa', 'C. xây dựng', 'D. bảo vệ']
+                },
+                {
+                    id: 'v7',
+                    question: 'Cuộc cách mạng công nghiệp 4.0 đang tạo ra những thay đổi _____ trong mọi lĩnh vực.',
+                    options: ['A. nhỏ lẻ', 'B. sâu sắc', 'C. tạm bợ', 'D. bề ngoài']
+                },
+                {
+                    id: 'v8',
+                    question: 'Giáo dục nhân cách là _____ quan trọng để hình thành nhân cách toàn diện cho học sinh.',
+                    options: ['A. chi tiết', 'B. nền tảng', 'C. phụ tùng', 'D. trang trí']
+                },
+                {
+                    id: 'v9',
+                    question: 'Làm việc thiếu áp lực khiến nhân viên dần trở nên _____ và kém sáng tạo.',
+                    options: ['A. ỳ ạch', 'B. năng nổ', 'C. tích cực', 'D. chủ động']
+                },
+                {
+                    id: 'v10',
+                    question: 'Trên tàu điện ngầm, thanh niên nên _____ chỗ ngồi ưu tiên cho người cao tuổi.',
+                    options: ['A. tranh giành', 'B. nhường', 'C. chiếm giữ', 'D. cầm giữ']
+                }
+            ],
+            grammarQuestions: [
+                {
+                    id: 'g1',
+                    question: 'Các nhà nghiên cứu _____ tìm ra được phương pháp điều trị mới cho bệnh ung thư.',
+                    options: ['A. sắp sửa', 'B. vừa mới', 'C. đang còn', 'D. chưa từng']
+                },
+                {
+                    id: 'g2',
+                    question: 'Cô ấy giỏi ngoại ngữ, _____ khả năng giao tiếp thì vẫn còn hạn chế.',
+                    options: ['A. nhưng mà', 'B. vì vậy', 'C. cho nên', 'D. do đó']
+                },
+                {
+                    id: 'g3',
+                    question: 'Dọn dẹp nhà cửa xong, mẹ tranh thủ nấu _____ bữa cơm chiều.',
+                    options: ['A. luôn', 'B. mãi', 'C. hoài', 'D. suốt']
+                },
+                {
+                    id: 'g4',
+                    question: '_____ điều kiện sống khắc nghiệt, người dân vùng cao vẫn lạc quan yêu đời.',
+                    options: ['A. Mặc dù', 'B. Bởi vì', 'C. Để mà', 'D. Khi mà']
+                },
+                {
+                    id: 'g5',
+                    question: 'Ngôi đình cổ này _____ là nơi hội họp của cả làng từ thời xa xưa.',
+                    options: ['A. vốn dĩ', 'B. sắp sửa', 'C. đang còn', 'D. mới chỉ']
+                },
+                {
+                    id: 'g6',
+                    question: 'Giá xăng tăng cao _____ người dân phải thắt lưng buộc bụng.',
+                    options: ['A. khiến', 'B. nhằm', 'C. giúp', 'D. cản']
+                },
+                {
+                    id: 'g7',
+                    question: '_____ bao nhiêu công sức mới đạt được thành tựu như hôm nay!',
+                    options: ['A. Chỉ', 'B. Phải mất', 'C. Cần', 'D. Vừa']
+                },
+                {
+                    id: 'g8',
+                    question: 'Kinh tế phát triển nhanh, _____ khoảng cách giàu nghèo cũng ngày càng gia tăng.',
+                    options: ['A. tuy nhiên', 'B. vì vậy mà', 'C. cho nên', 'D. bởi thế']
+                },
+                {
+                    id: 'g9',
+                    question: 'Công nhân đình công tập thể _____ đòi tăng lương và cải thiện điều kiện làm việc.',
+                    options: ['A. để', 'B. mà', 'C. khi', 'D. nếu']
+                },
+                {
+                    id: 'g10',
+                    question: '_____ cam kết rồi thì dù khó khăn cũng phải thực hiện.',
+                    options: ['A. Một khi đã', 'B. Nếu như', 'C. Giả sử', 'D. Trong khi']
+                },
+                {
+                    id: 'g11',
+                    question: 'Bố đang đọc báo _____ điện thoại reo liên tục.',
+                    options: ['A. bởi', 'B. nên', 'C. thì', 'D. với']
+                },
+                {
+                    id: 'g12',
+                    question: 'Dự án phức tạp này _____ cũng phải mất cả năm mới hoàn thành.',
+                    options: ['A. nhiều lắm', 'B. tối thiểu', 'C. chắc chắn', 'D. nhanh nhất']
+                },
+                {
+                    id: 'g13',
+                    question: '_____ trời mưa to thì buổi biểu diễn ngoài trời sẽ bị hủy.',
+                    options: ['A. Giả như', 'B. Dù cho', 'C. Mặc dù', 'D. Tuy rằng']
+                },
+                {
+                    id: 'g14',
+                    question: 'Nắng nóng 40 độ thế này, _____ ra đường lúc trưa?',
+                    options: ['A. có thể', 'B. ai lại', 'C. hẳn là', 'D. chắc hẳn']
+                },
+                {
+                    id: 'g15',
+                    question: 'Chị ấy vừa phải lo việc công ty, _____ phải chăm sóc bố mẹ già yếu.',
+                    options: ['A. lại', 'B. mới', 'C. rồi', 'D. được']
+                }
+            ],
+            matchingQuestions: [
+                { id: 'm1', question: 'Làm việc suốt 15 năm, _______ ông ấy chưa bao giờ đi muộn.' },
+                { id: 'm2', question: '_______, nghiên cứu này còn mang lại nhiều lợi ích thiết thực cho xã hội.' },
+                { id: 'm3', question: 'Thành công đến từ nỗ lực bền bỉ _______ từ may mắn.' },
+                { id: 'm4', question: '_______ làm việc, sinh viên _______ học tập để không bị tụt lại.' },
+                { id: 'm5', question: 'Phát triển kinh tế phải _______ bảo vệ môi trường.' },
+                { id: 'm6', question: 'Câu chuyện _______ cảm động _______ còn mang tính giáo dục cao.' },
+                { id: 'm7', question: 'Nghe tin dữ, bà mẹ _______ ngất xỉu tại chỗ.' },
+                { id: 'm8', question: 'Cơ hội quý báu như vậy, người khôn ngoan _______ bỏ lỡ.' },
+                { id: 'm9', question: 'Món ăn này _______ ngon tuyệt!' },
+                { id: 'm10', question: 'Theo dự báo, tuần sau _______ sẽ có bão lớn.' },
+                { id: 'm11', question: 'Anh ta _______ quan tâm đến ý kiến của đồng nghiệp.' },
+                { id: 'm12', question: '_______ trong tương lai công nghệ AI sẽ thay thế hoàn toàn con người?' },
+                { id: 'm13', question: 'Tòa nhà này _______ được xây dựng từ thời Pháp thuộc.' },
+                { id: 'm14', question: 'Đứa trẻ khóc _______ cả xóm không ngủ được.' },
+                { id: 'm15', question: '_______, doanh nghiệp này _______ đóng góp tích cực cho cộng đồng.' },
+                { id: 'm16', question: 'Mọi người đều ủng hộ kế hoạch, _______ những người trực tiếp được hưởng lợi.' },
+                { id: 'm17', question: 'Đã có công việc ổn định rồi, _______ lo lắng về tương lai.' },
+                { id: 'm18', question: 'Một tháng _______ phải kiểm tra sức khỏe định kỳ một lần.' },
+                { id: 'm19', question: 'Giáo sư này _______ uyên bác _______ khiêm tốn.' },
+                { id: 'm20', question: 'Phải _______ mười lần thử nghiệm _______ mới thành công.' }
+            ],
+            matchingOptions: [
+                'thế nhưng', 'chứ không', 'nói thêm', 'mở rộng ra', 'bên cạnh đó', 
+                'vừa... vừa', 'đi kèm với', 'nhất là', 'không khỏi', 'làm sao mà không',
+                'thật là', 'chắc hẳn', 'ít khi', 'cần gì phải', 'vốn dĩ',
+                'đến mức', 'cũng như', 'tối thiểu', 'hơn... nữa', 'có khi nào',
+                'Vừa... vừa', 'Nói thêm', 'Bên cạnh đó... cũng như'
+            ],
+            correctAnswers: {
+                // 词汇选择题
+                v1: 'A', v2: 'A', v3: 'A', v4: 'B', v5: 'C',
+                v6: 'A', v7: 'B', v8: 'B', v9: 'A', v10: 'B',
+                // 语法选择题
+                g1: 'B', g2: 'A', g3: 'A', g4: 'A', g5: 'A',
+                g6: 'A', g7: 'B', g8: 'A', g9: 'A', g10: 'A',
+                g11: 'C', g12: 'B', g13: 'A', g14: 'B', g15: 'A',
+                // 语法搭配题
+                m1: 'thế nhưng', m2: 'Nói thêm', m3: 'chứ không', m4: 'Vừa... vừa',
+                m5: 'đi kèm với', m6: 'vừa... vừa', m7: 'không khỏi', m8: 'làm sao mà không',
+                m9: 'thật là', m10: 'chắc hẳn', m11: 'ít khi', m12: 'Có khi nào',
+                m13: 'vốn dĩ', m14: 'đến mức', m15: 'Bên cạnh đó... cũng như', m16: 'nhất là',
+                m17: 'cần gì phải', m18: 'tối thiểu', m19: 'mở rộng ra', m20: 'hơn... nữa'
+            }
+        };
+
+        // 应用状态
+        let appState = {
+            studentName: '',
+            isStarted: false,
+            isSubmitted: false,
+            answers: {},
+            score: 0,
+            rankings: JSON.parse(localStorage.getItem('viet_exam_rankings') || '[]'),
+            startTime: null,
+            timeElapsed: 0,
+            timeRemaining: EXAM_DURATION
+        };
+
+        // 计时器
+        let timer = null;
+
+        // 格式化时间
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // 计算分数
+        function calculateScore() {
+            let totalScore = 0;
+            
+            // 词汇题（每题3分）
+            for (let i = 1; i <= 10; i++) {
+                if (appState.answers[`v${i}`] === examData.correctAnswers[`v${i}`]) {
+                    totalScore += 3;
+                }
+            }
+            
+            // 语法题（每题2分）
+            for (let i = 1; i <= 15; i++) {
+                if (appState.answers[`g${i}`] === examData.correctAnswers[`g${i}`]) {
+                    totalScore += 2;
+                }
+            }
+            
+            // 搭配题（每题2分）- 不区分大小写
+            for (let i = 1; i <= 20; i++) {
+                const userAnswer = appState.answers[`m${i}`];
+                const correctAnswer = examData.correctAnswers[`m${i}`];
+                if (userAnswer && correctAnswer && 
+                    userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
+                    totalScore += 2;
+                }
+            }
+            
+            return totalScore;
+        }
+
+        // 开始考试
+        function startExam() {
+            const nameInput = document.getElementById('studentName');
+            if (nameInput.value.trim()) {
+                appState.studentName = nameInput.value.trim();
+                appState.isStarted = true;
+                appState.startTime = new Date();
+                
+                timer = setInterval(() => {
+                    appState.timeElapsed++;
+                    appState.timeRemaining--;
+                    
+                    // 更新显示
+                    const timerEl = document.getElementById('timer');
+                    const remainingEl = document.getElementById('remaining');
+                    if (timerEl) {
+                        timerEl.textContent = formatTime(appState.timeElapsed);
+                    }
+                    if (remainingEl) {
+                        remainingEl.textContent = formatTime(appState.timeRemaining);
+                        
+                        // 时间警告
+                        const timerContainer = document.querySelector('.timer-container');
+                        if (appState.timeRemaining <= 300) { // 最后5分钟
+                            timerContainer.classList.add('timer-danger');
+                        } else if (appState.timeRemaining <= 600) { // 最后10分钟
+                            timerContainer.classList.add('timer-warning');
+                        }
+                    }
+                    
+                    // 时间到自动提交
+                    if (appState.timeRemaining <= 0) {
+                        autoSubmit();
+                    }
+                }, 1000);
+                
+                render();
+            } else {
+                alert('请输入您的姓名！');
+            }
+        }
+
+        // 自动提交
+        function autoSubmit() {
+            clearInterval(timer);
+            appState.score = calculateScore();
+            appState.isSubmitted = true;
+            
+            // 更新排行榜
+            const newResult = {
+                name: appState.studentName,
+                score: appState.score,
+                time: appState.timeElapsed,
+                date: new Date().toLocaleString('zh-CN')
+            };
+            
+            appState.rankings.push(newResult);
+            appState.rankings.sort((a, b) => {
+                if (b.score !== a.score) return b.score - a.score;
+                return a.time - b.time;
+            });
+            
+            localStorage.setItem('viet_exam_rankings', JSON.stringify(appState.rankings));
+            
+            alert('时间到！考试已自动提交。');
+            render();
+        }
+
+        // 处理答案选择
+        function handleAnswer(questionId, answer) {
+            appState.answers[questionId] = answer;
+            
+            // 更新进度
+            updateProgress();
+            
+            // 更新问题卡片样式
+            const card = document.querySelector(`[data-question="${questionId}"]`);
+            if (card) {
+                card.classList.add('answered');
+            }
+            
+            // 更新选项样式
+            const options = document.querySelectorAll(`input[name="${questionId}"]`);
+            options.forEach(option => {
+                const label = option.parentElement;
+                if (option.checked) {
+                    label.classList.add('selected');
+                } else {
+                    label.classList.remove('selected');
+                }
+            });
+        }
+
+        // 更新进度
+        function updateProgress() {
+            const totalQuestions = 45;
+            const answeredQuestions = Object.keys(appState.answers).length;
+            const progress = (answeredQuestions / totalQuestions) * 100;
+            
+            const progressFill = document.querySelector('.progress-fill');
+            if (progressFill) {
+                progressFill.style.width = `${progress}%`;
+            }
+            
+            const progressText = document.getElementById('progress-text');
+            if (progressText) {
+                progressText.textContent = `已完成：${answeredQuestions}/${totalQuestions}`;
+            }
+        }
+
+        // 提交考试
+        function submitExam() {
+            const answeredCount = Object.keys(appState.answers).length;
+            const totalCount = 45;
+            
+            let confirmMessage = '确定要提交试卷吗？';
+            if (answeredCount < totalCount) {
+                confirmMessage = `您还有 ${totalCount - answeredCount} 道题未作答，确定要提交吗？`;
+            }
+            
+            if (confirm(confirmMessage)) {
+                clearInterval(timer);
+                appState.score = calculateScore();
+                appState.isSubmitted = true;
+                
+                // 更新排行榜
+                const newResult = {
+                    name: appState.studentName,
+                    score: appState.score,
+                    time: appState.timeElapsed,
+                    date: new Date().toLocaleString('zh-CN')
+                };
+                
+                appState.rankings.push(newResult);
+                appState.rankings.sort((a, b) => {
+                    if (b.score !== a.score) return b.score - a.score;
+                    return a.time - b.time;
+                });
+                
+                localStorage.setItem('viet_exam_rankings', JSON.stringify(appState.rankings));
+                render();
+            }
+        }
+
+        // 重新开始
+        function restart() {
+            appState = {
+                studentName: '',
+                isStarted: false,
+                isSubmitted: false,
+                answers: {},
+                score: 0,
+                rankings: JSON.parse(localStorage.getItem('viet_exam_rankings') || '[]'),
+                startTime: null,
+                timeElapsed: 0,
+                timeRemaining: EXAM_DURATION
+            };
+            clearInterval(timer);
+            render();
+        }
+
+        // 渲染首页
+        function renderHomePage() {
+            return `
+                <div class="container" style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
+                    <div class="card fade-in" style="max-width: 600px; width: 100%;">
+                        <h1>越南语期末测试系统</h1>
+                        <div style="text-align: center; margin-bottom: 2rem;">
+                            <p style="color: #718096; font-size: 1.1rem;">考试时间：45分钟 | 总分：100分</p>
+                        </div>
+                        <div style="margin-bottom: 1.5rem;">
+                            <label for="studentName">请输入您的姓名</label>
+                            <input
+                                type="text"
+                                id="studentName"
+                                placeholder="请输入姓名开始考试"
+                                onkeypress="if(event.key === 'Enter') startExam()"
+                            />
+                        </div>
+                        <button onclick="startExam()" class="btn btn-primary">
+                            开始考试
+                        </button>
+                        
+                        ${appState.rankings.length > 0 ? `
+                            <div style="margin-top: 3rem;">
+                                <h2 style="text-align: center; margin-bottom: 1.5rem;">🏆 排行榜 TOP 5</h2>
+                                <div>
+                                    ${appState.rankings.slice(0, 5).map((result, index) => `
+                                        <div class="ranking-item">
+                                            <span class="ranking-rank">${index + 1}</span>
+                                            <span class="ranking-name">${result.name}</span>
+                                            <span class="ranking-score">${result.score}分</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // 渲染考试页面
+        function renderExamPage() {
+            const answeredCount = Object.keys(appState.answers).length;
+            const totalCount = 45;
+            
+            return `
+                <div class="timer-container ${appState.timeRemaining <= 300 ? 'timer-danger' : appState.timeRemaining <= 600 ? 'timer-warning' : ''}">
+                    <div class="timer-display">
+                        <span>⏱️</span>
+                        <span>剩余时间：<span id="remaining">${formatTime(appState.timeRemaining)}</span></span>
+                    </div>
+                </div>
+                
+                <div class="container" style="padding-top: 20px;">
+                    <div class="card">
+                        <h1>越南语期末测试</h1>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <div style="display: flex; gap: 2rem;">
+                                <span>👤 ${appState.studentName}</span>
+                                <span>⏱️ 已用时：<span id="timer">${formatTime(appState.timeElapsed)}</span></span>
+                            </div>
+                            <span id="progress-text">已完成：${answeredCount}/${totalCount}</span>
+                        </div>
+                        
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${(answeredCount / totalCount) * 100}%"></div>
+                        </div>
+                        
+                        <!-- 词汇选择题 -->
+                        <div>
+                            <h2>二、词汇选择题（每题3分，共30分）
+                                <span class="status-icon ${answeredCount >= 10 ? 'status-complete' : 'status-incomplete'}">
+                                    ${answeredCount >= 10 ? '✓' : '○'}
+                                </span>
+                            </h2>
+                            ${examData.vocabularyQuestions.map((q, index) => `
+                                <div class="question-card ${appState.answers[q.id] ? 'answered' : ''}" data-question="${q.id}">
+                                    <p style="font-weight: 600; margin-bottom: 1rem;">
+                                        <span class="question-number">${index + 1}</span>
+                                        ${q.question}
+                                    </p>
+                                    <div>
+                                        ${q.options.map((option) => `
+                                            <label class="question-option ${appState.answers[q.id] === option.charAt(0) ? 'selected' : ''}">
+                                                <input
+                                                    type="radio"
+                                                    name="${q.id}"
+                                                    value="${option.charAt(0)}"
+                                                    ${appState.answers[q.id] === option.charAt(0) ? 'checked' : ''}
+                                                    onchange="handleAnswer('${q.id}', '${option.charAt(0)}')"
+                                                />
+                                                <span>${option}</span>
+                                            </label>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <!-- 语法选择题 -->
+                        <div style="margin-top: 3rem;">
+                            <h2>三、语法选择题（每题2分，共30分）
+                                <span class="status-icon ${answeredCount >= 25 ? 'status-complete' : 'status-incomplete'}">
+                                    ${answeredCount >= 25 ? '✓' : '○'}
+                                </span>
+                            </h2>
+                            ${examData.grammarQuestions.map((q, index) => `
+                                <div class="question-card ${appState.answers[q.id] ? 'answered' : ''}" data-question="${q.id}">
+                                    <p style="font-weight: 600; margin-bottom: 1rem;">
+                                        <span class="question-number">${index + 1}</span>
+                                        ${q.question}
+                                    </p>
+                                    <div>
+                                        ${q.options.map((option) => `
+                                            <label class="question-option ${appState.answers[q.id] === option.charAt(0) ? 'selected' : ''}">
+                                                <input
+                                                    type="radio"
+                                                    name="${q.id}"
+                                                    value="${option.charAt(0)}"
+                                                    ${appState.answers[q.id] === option.charAt(0) ? 'checked' : ''}
+                                                    onchange="handleAnswer('${q.id}', '${option.charAt(0)}')"
+                                                />
+                                                <span>${option}</span>
+                                            </label>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <!-- 语法搭配题 -->
+                        <div style="margin-top: 3rem;">
+                            <h2>四、语法搭配题（每题2分，共40分）
+                                <span class="status-icon ${answeredCount >= 45 ? 'status-complete' : 'status-incomplete'}">
+                                    ${answeredCount >= 45 ? '✓' : '○'}
+                                </span>
+                            </h2>
+                            <div class="vocab-box">
+                                <h3>词汇框：</h3>
+                                <div class="vocab-grid">
+                                    ${examData.matchingOptions.map((option) => `
+                                        <div class="vocab-item">${option}</div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            ${examData.matchingQuestions.map((q, index) => `
+                                <div class="question-card ${appState.answers[q.id] ? 'answered' : ''}" data-question="${q.id}">
+                                    <p style="font-weight: 600; margin-bottom: 1rem;">
+                                        <span class="question-number">${index + 1}</span>
+                                        ${q.question}
+                                    </p>
+                                    <select 
+                                        onchange="handleAnswer('${q.id}', this.value)"
+                                        style="${appState.answers[q.id] ? 'border-color: #8b5cf6; background: #f3e8ff;' : ''}"
+                                    >
+                                        <option value="">请选择答案</option>
+                                        ${examData.matchingOptions.map((option) => `
+                                            <option value="${option}" ${appState.answers[q.id] === option ? 'selected' : ''}>
+                                                ${option}
+                                            </option>
+                                        `).join('')}
+                                    </select>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <button onclick="submitExam()" class="btn btn-success" style="margin-top: 3rem;">
+                            提交试卷
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 渲染结果页面
+        function renderResultPage() {
+            const myRank = appState.rankings.findIndex(r => 
+                r.name === appState.studentName && r.score === appState.score) + 1;
+            
+            return `
+                <div class="container">
+                    <div class="card">
+                        <h1>考试完成！</h1>
+                        <div class="score-display">
+                            <div class="score-circle">
+                                <div class="score-number">${appState.score}</div>
+                                <div class="score-label">总分100</div>
+                            </div>
+                            <div style="margin-top: 3rem; text-align: center;">
+                                <p style="font-size: 1.25rem; color: #4a5568;">
+                                    用时：${formatTime(appState.timeElapsed)} | 排名：第${myRank}名
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 3rem;">
+                            <h2>答题详情</h2>
+                            
+                            <div style="margin-bottom: 2rem;">
+                                <h3>词汇选择题（共30分）</h3>
+                                <div class="result-grid">
+                                    ${examData.vocabularyQuestions.map((q) => {
+                                        const isCorrect = appState.answers[q.id] === examData.correctAnswers[q.id];
+                                        return `
+                                            <div class="result-indicator ${isCorrect ? 'correct' : 'incorrect'}">
+                                                <span>${q.id.substring(1)}.</span>
+                                                <span>${isCorrect ? '✓' : '✗'}</span>
+                                                <span style="font-size: 0.875rem;">
+                                                    ${appState.answers[q.id] || '未答'}/${examData.correctAnswers[q.id]}
+                                                </span>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: 2rem;">
+                                <h3>语法选择题（共30分）</h3>
+                                <div class="result-grid">
+                                    ${examData.grammarQuestions.map((q) => {
+                                        const isCorrect = appState.answers[q.id] === examData.correctAnswers[q.id];
+                                        return `
+                                            <div class="result-indicator ${isCorrect ? 'correct' : 'incorrect'}">
+                                                <span>${q.id.substring(1)}.</span>
+                                                <span>${isCorrect ? '✓' : '✗'}</span>
+                                                <span style="font-size: 0.875rem;">
+                                                    ${appState.answers[q.id] || '未答'}/${examData.correctAnswers[q.id]}
+                                                </span>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h3>语法搭配题（共40分）</h3>
+                                <div class="result-grid">
+                                    ${examData.matchingQuestions.map((q) => {
+                                        const userAnswer = appState.answers[q.id];
+                                        const correctAnswer = examData.correctAnswers[q.id];
+                                        const isCorrect = userAnswer && correctAnswer && 
+                                            userAnswer.toLowerCase() === correctAnswer.toLowerCase();
+                                        return `
+                                            <div class="result-indicator ${isCorrect ? 'correct' : 'incorrect'}">
+                                                <span>${q.id.substring(1)}.</span>
+                                                <span>${isCorrect ? '✓' : '✗'}</span>
+                                                <span style="font-size: 0.875rem;">
+                                                    ${userAnswer ? '已答' : '未答'}
+                                                </span>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button onclick="restart()" class="btn btn-primary" style="margin-top: 2rem;">
+                            返回首页
+                        </button>
+                    </div>
+                    
+                    <div class="card">
+                        <h2 style="text-align: center;">🏆 完整排行榜</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>排名</th>
+                                    <th>姓名</th>
+                                    <th>分数</th>
+                                    <th>用时</th>
+                                    <th>考试时间</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${appState.rankings.map((result, index) => `
+                                    <tr class="${result.name === appState.studentName && result.score === appState.score ? 'highlight-row' : ''}">
+                                        <td style="font-weight: bold;">${index + 1}</td>
+                                        <td>${result.name}</td>
+                                        <td style="font-weight: bold; color: #7c3aed;">${result.score}分</td>
+                                        <td>${formatTime(result.time)}</td>
+                                        <td style="font-size: 0.875rem; color: #718096;">${result.date}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 主渲染函数
+        function render() {
+            const app = document.getElementById('app');
+            
+            if (!appState.isStarted) {
+                app.innerHTML = renderHomePage();
+            } else if (!appState.isSubmitted) {
+                app.innerHTML = renderExamPage();
+            } else {
+                app.innerHTML = renderResultPage();
+            }
+        }
+
+        // 初始化
+        render();
+    </script>
+</body>
+</html>
